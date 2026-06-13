@@ -1,0 +1,36 @@
+1) To run neo4j using docker use ->
+
+docker run -d \
+  --name neo4j-fpl \
+  -p 7474:7474 -p 7687:7687 \
+  -e NEO4J_AUTH=neo4j/your-neo4j-password \
+  -v "$PWD/neo4j_data":/data \
+  -v "$PWD/neo4j_plugins":/plugins \
+  neo4j:5
+
+
+2) Run this once
+
+CREATE CONSTRAINT season_unique IF NOT EXISTS
+FOR (s:Season)
+REQUIRE s.season_name IS UNIQUE;
+
+CREATE CONSTRAINT gameweek_unique IF NOT EXISTS
+FOR (gw:Gameweek)
+REQUIRE (gw.season, gw.GW_number) IS UNIQUE;
+
+CREATE CONSTRAINT fixture_unique IF NOT EXISTS
+FOR (f:Fixture)
+REQUIRE (f.season, f.fixture_number) IS UNIQUE;
+
+CREATE CONSTRAINT team_unique IF NOT EXISTS
+FOR (t:Team)
+REQUIRE t.name IS UNIQUE;
+
+CREATE CONSTRAINT player_unique IF NOT EXISTS
+FOR (p:Player)
+REQUIRE (p.player_name, p.player_element) IS UNIQUE;
+
+CREATE CONSTRAINT position_unique IF NOT EXISTS
+FOR (pos:Position)
+REQUIRE pos.name IS UNIQUE;

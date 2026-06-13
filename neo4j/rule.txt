@@ -1,0 +1,65 @@
+// Query for getting the Non-Defenders
+
+// Players who have DEF + at least one non-DEF position
+MATCH (p:Player)-[:PLAYS_AS]->(pos:Position)
+WITH p, collect(DISTINCT pos.name) AS positions
+WHERE "DEF" IN positions
+  AND any(other IN positions WHERE other <> "DEF")
+
+// For those players, look at all fixtures they played in
+CALL {
+  WITH p
+  MATCH (p)-[pi:PLAYED_IN]->(f:Fixture)
+  MATCH (s:Season)-[:HAS_GW]->(:Gameweek)-[:HAS_FIXTURE]->(f)
+
+  // expected DEF score (no bonus)
+  WITH p, s, f, pi,
+    CASE
+      WHEN pi.minutes = 0 THEN 0
+      WHEN pi.minutes < 60 THEN 1
+      ELSE 2
+    END
+    + 3 * pi.assists
+    + (-2) * pi.penalties_missed
+    + (-2) * pi.own_goals
+    + (-1) * pi.yellow_cards
+    + (-3) * pi.red_cards
+    + 6 * pi.goals_scored
+    + CASE
+        WHEN pi.minutes > 60 AND pi.clean_sheets > 0 THEN 4
+        ELSE 0
+      END
+    + (-1) * toInteger(pi.goals_conceded / 2)
+    AS def_score,
+
+    (pi.total_points - pi.bonus) AS actual_without_bonus
+
+  WITH p, s, f, pi, def_score, actual_without_bonus,
+       (def_score = actual_without_bonus) AS matches_def
+
+  WHERE matches_def = false
+
+  RETURN p AS player,
+         collect({
+           def_score: def_score,
+           season: s.season_name,
+           fixture_number: f.fixture_number,
+           matches_def: matches_def,
+           total_points: pi.total_points
+         }) AS incorrect_details,
+         count(*) AS not_def_fixtures
+}
+
+// Total fixtures played by that player
+CALL {
+  WITH player
+  MATCH (player)-[pi_all:PLAYED_IN]->(:Fixture)
+  RETURN count(*) AS total_fixtures
+}
+
+RETURN
+  player.player_name AS player,
+  not_def_fixtures,
+  total_fixtures,
+  incorrect_details AS fixture_details
+ORDER BY not_def_fixtures DESC, player;
