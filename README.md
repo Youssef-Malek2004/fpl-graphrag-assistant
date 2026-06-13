@@ -1,5 +1,16 @@
 # FPL Graph-RAG Assistant ⚽
 
+<!-- BADGES -->
+<p align="left">
+  <img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python"/>
+  <img src="https://img.shields.io/badge/Neo4j-4581C3?style=flat-square&logo=neo4j&logoColor=white" alt="Neo4j"/>
+  <img src="https://img.shields.io/badge/Cypher-008CC1?style=flat-square" alt="Cypher"/>
+  <img src="https://img.shields.io/badge/spaCy-09A3D5?style=flat-square&logo=spacy&logoColor=white" alt="spaCy"/>
+  <img src="https://img.shields.io/badge/GraphRAG-4B8BBE?style=flat-square" alt="GraphRAG"/>
+  <img src="https://img.shields.io/badge/OpenRouter-6566F1?style=flat-square" alt="OpenRouter"/>
+</p>
+
+
 A **GraphRAG question-answering system** over Fantasy Premier League data. Ask in plain English — _"compare Salah and Saka last season"_, _"who should I pick at midfield gameweek 10?"_ — and the system parses the question, walks a **Neo4j knowledge graph**, retrieves grounded evidence with a **hybrid Cypher + vector search**, and has an LLM answer **only** from that retrieved context.
 
 Built on two full Premier League seasons modeled as a knowledge graph of players, teams, fixtures, gameweeks, and positions.
