@@ -30,7 +30,7 @@ flowchart TD
     CYPHER --> KG[(Neo4j Knowledge Graph)]
     VEC --> KG
 
-    KG --> EVID[Evidence selection<br/>baseline | hybrid]
+    KG --> EVID[Evidence selection<br/>baseline / hybrid]
     EVID --> CTX[Context builder<br/>graph evidence → grounded prompt]
     CTX --> LLM[LLM backend<br/>OpenRouter: DeepSeek v3.1 / Llama-3.3-70B]
     LLM --> A[Grounded answer]
